@@ -13,6 +13,7 @@ public static class LoginResultHttpExtensions
         {
             LoginResult.Success success => new OkObjectResult(new LoginResponse(success.Token)),
             LoginResult.InvalidCredentials => Unauthorized(),
+            _ => Unexpected(),
         };
 
     private static ActionResult<LoginResponse> Unauthorized()
@@ -25,6 +26,19 @@ public static class LoginResultHttpExtensions
         })
         {
             StatusCode = StatusCodes.Status401Unauthorized
+        };
+    }
+
+    private static ActionResult<LoginResponse> Unexpected()
+    {
+        return new ObjectResult(new ProblemDetails
+        {
+            Status = StatusCodes.Status500InternalServerError,
+            Title = "Internal Server Error",
+            Detail = "Unexpected login result."
+        })
+        {
+            StatusCode = StatusCodes.Status500InternalServerError
         };
     }
 }
